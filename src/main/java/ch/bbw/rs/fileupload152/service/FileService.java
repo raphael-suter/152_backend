@@ -24,7 +24,7 @@ public class FileService {
         return fileRepository.save(File);
     }
 
-    public File getFile(String id) {
+    public File getFile(int id) {
         return fileRepository.findById(id).get();
     }
 

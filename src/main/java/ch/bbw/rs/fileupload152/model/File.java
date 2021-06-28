@@ -8,9 +8,8 @@ import javax.persistence.*;
 @Table(name = "files")
 public class File {
     @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid2")
-    private String id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
 
     private String name;
     private String type;
@@ -28,7 +27,7 @@ public class File {
         this.data = data;
     }
 
-    public String getId() {
+    public int getId() {
         return id;
     }
 

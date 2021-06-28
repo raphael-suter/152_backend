@@ -12,7 +12,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Controller
@@ -38,21 +40,19 @@ public class FileController {
         } catch (Exception e) {
             message = "Could not upload the file: " + file.getOriginalFilename() + "!";
 
-            e.printStackTrace();
-
             return ResponseEntity
                     .status(HttpStatus.EXPECTATION_FAILED)
                     .body(new ResponseMessage(message));
         }
     }
 
-    @GetMapping("/files")
+    @GetMapping("/images")
     public ResponseEntity<List<ResponseFile>> getListFiles() {
         List<ResponseFile> files = storageService.getAllFiles().map(file -> {
             String fileDownloadUri = ServletUriComponentsBuilder
                     .fromCurrentContextPath()
-                    .path("/files/")
-                    .path(file.getId())
+                    .path("/images/")
+                    .path(Integer.toString(file.getId()))
                     .toUriString();
 
             return new ResponseFile(
@@ -65,8 +65,8 @@ public class FileController {
         return ResponseEntity.status(HttpStatus.OK).body(files);
     }
 
-    @GetMapping("/files/{id}")
-    public ResponseEntity<byte[]> getFile(@PathVariable String id) {
+    @GetMapping("/images/{id}")
+    public ResponseEntity<byte[]> getFile(@PathVariable int id) {
         File file = storageService.getFile(id);
 
         return ResponseEntity.ok()
