@@ -12,9 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Controller
@@ -27,23 +25,22 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile file) {
-        String message = "";
+    public ResponseEntity<ResponseMessage> uploadFile(@RequestParam("file") MultipartFile[] files) {
+        String message = "Uploaded the files successfully!";
+        HttpStatus httpStatus = HttpStatus.OK;
 
-        try {
-            storageService.store(file);
-            message = "Uploaded the file successfully: " + file.getOriginalFilename();
-
-            return ResponseEntity
-                    .status(HttpStatus.OK)
-                    .body(new ResponseMessage(message));
-        } catch (Exception e) {
-            message = "Could not upload the file: " + file.getOriginalFilename() + "!";
-
-            return ResponseEntity
-                    .status(HttpStatus.EXPECTATION_FAILED)
-                    .body(new ResponseMessage(message));
+        for (MultipartFile file : files) {
+            try {
+                storageService.store(file);
+            } catch (Exception e) {
+                message = "Could not upload all the files!";
+                httpStatus = HttpStatus.EXPECTATION_FAILED;
+            }
         }
+
+        return ResponseEntity
+                .status(httpStatus)
+                .body(new ResponseMessage(message));
     }
 
     @GetMapping("/images")
