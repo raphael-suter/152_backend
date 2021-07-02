@@ -1,7 +1,5 @@
 package ch.bbw.rs.fileupload152.model;
 
-import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 
 @Entity
