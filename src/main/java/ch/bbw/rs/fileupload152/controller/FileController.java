@@ -45,7 +45,27 @@ public class FileController {
 
     @GetMapping("/images")
     public ResponseEntity<List<ResponseFile>> getListFiles() {
-        List<ResponseFile> files = storageService.getAllFiles().map(file -> {
+        List<ResponseFile> files = storageService.getAllFiles().filter(file -> file.getType().equals("image/jpeg")).
+                map(file -> {
+                    String fileDownloadUri = ServletUriComponentsBuilder
+                            .fromCurrentContextPath()
+                            .path("/images/")
+                            .path(Integer.toString(file.getId()))
+                            .toUriString();
+
+                    return new ResponseFile(
+                            file.getName(),
+                            fileDownloadUri,
+                            file.getType(),
+                            file.getData().length);
+                }).collect(Collectors.toList());
+
+        return ResponseEntity.status(HttpStatus.OK).body(files);
+    }
+
+    @GetMapping("/thumbnails")
+    public ResponseEntity<List<ResponseFile>> getListThumbnails() {
+        List<ResponseFile> files = storageService.getAllFiles().filter(file -> file.getType().equals("image/png")).map(file -> {
             String fileDownloadUri = ServletUriComponentsBuilder
                     .fromCurrentContextPath()
                     .path("/images/")
